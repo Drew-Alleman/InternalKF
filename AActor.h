@@ -6,6 +6,18 @@ public:
     union {
 
         struct {
+            char pad_3dSize[0x264];
+            float x3DDrawScale;
+            float y3DDrawScale;
+            float z3DDrawScale;
+        };
+
+        struct {
+            char pad_drawSize[0x260];
+            float drawSize;
+        };
+
+        struct {
             char pad_physics[0x74];
             PHYS physics;
         };
@@ -22,7 +34,7 @@ public:
 
         struct {
             char pad_003[0x14C];
-            float y;                     // 0x14C (Based on your CE table)
+            float y;                     // 0x14C 
             float x;                     // 0x150
             float z;                     // 0x154
         };

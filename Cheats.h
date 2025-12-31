@@ -16,8 +16,11 @@ private:
 
 public:
     APawn* myPawn = nullptr;
-
+    std::vector<AActor*> GetMovingAActors();
+    void InstaKill();
     bool GetModules();
     bool GetLocalPlayer();
     void Start();
+    void ScaleAActorsUp();
+    void ScaleAActorsDown();
 };
