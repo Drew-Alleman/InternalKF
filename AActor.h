@@ -1,7 +1,14 @@
 #pragma once
+#include "Enums.h"
+
 class AActor {
 public:
     union {
+
+        struct {
+            char pad_physics[0x74];
+            PHYS physics;
+        };
 
         struct {
             char pad_008[0x480];

@@ -3,6 +3,7 @@
 #include "ULevel.h"
 #include "AActor.h" 
 #include "APawn.h"
+#include "Enums.h"
 
 bool Cheats::GetModules() {
     /* Loads Engine.dll Base*/
@@ -35,14 +36,20 @@ bool Cheats::GetLocalPlayer() {
 
 void Cheats::Start() {
     ULevel* Level = myPawn->Level;
+    if (!Level) return;
 
     for (int i = 0; i < Level->currentEntities; i++) {
-        APawn* ent = (APawn*)Level->EntityList[i];
-        // If the ents not valid or me skip
-        if (ent == nullptr || ent == myPawn) continue;
-        // I dont care if they are dead
-        if (ent->health <= 0) continue;
 
-        std::cout << "[+] Ent: " << i << " has " << ent->health << " health." << std::endl;;
+        AActor* genericActor = Level->EntityList[i];
+        if (!genericActor || genericActor == (AActor*)myPawn) continue;
+
+        if (genericActor->physics != PHYS::Walking && genericActor->physics != PHYS::Falling) continue;
+
+
+        APawn* ent = (APawn*)genericActor;
+
+        if (ent->health <= 0 || ent->health > 10000) continue;
+
+        std::cout << "[+] Found Entity [" << i << "] Health: " << ent->health << std::endl;
     }
 }
