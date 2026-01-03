@@ -6,28 +6,25 @@
 
 
 void CreateConsole() {
-    // open a command console findow
     AllocConsole();
-    // init stout, stderr, and stdin
     FILE* f;
     freopen_s(&f, "CONOUT$", "w", stdout);
     freopen_s(&f, "CONOUT$", "w", stderr);
     freopen_s(&f, "CONIN$", "r", stdin);
     std::cout.clear();
-    // Now we have output!
     std::cout << "[+] Console Allocated Successfully!" << std::endl;
 }
 
 DWORD WINAPI MainThread(LPVOID lpParam) {
     HMODULE hModule = (HMODULE)lpParam;
     CreateConsole();
-    Cheats c = Cheats();
-    if (!c.GetLocalPlayer()) {
+
+    if (!cheats.GetLocalPlayer()) {
         std::cout << "Failed to fetch current player!" << std::endl;
     }
-    else {
-        c.Start();
-    }
+
+    cheats.Start();
+
     std::cout << "[*] Cleaning up and Detaching..." << std::endl;
     FreeConsole();
     FreeLibraryAndExitThread(hModule, 0);
