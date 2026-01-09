@@ -8,3 +8,5 @@ Part of a mini series Ive been working on in my blog:
 3. [Finding the Entity List](https://drewalleman.xyz/game-hacking/hacking/cheats/2025/12/30/reverse-engineering-unreal-engine-internal-dll-cheat-development-for-killing-floor-part-3-finding-the-entity-list)
 4. [Cleaning the Entity List with AActor Physics](https://drewalleman.xyz/game-hacking/hacking/cheats/2025/12/30/killing-floor-reversing-part-4-cleaning-the-entity-list-with-aactor-physics)
 5. [Creating an Instakill Cheat, Messing and with DrawScales](https://drewalleman.xyz/game-hacking/hacking/cheats/2025/12/30/reverse-engineering-unreal-engine-killing-floor-part-5-instakill-drawscales)
+6. [Hooking DirectX9 EndScene with MinHook and Creating a UI with ImGUI](https://drewalleman.xyz/game-hacking/hacking/cheats/2026/01/02/killing-floor-internal-dll-part-6-d3d9-endscene-imgui)
+7. [Aimbot, Optimizations and Rendering a Crosshair](https://drewalleman.xyz/game-hacking/hacking/cheats/2026/01/07/killing-floor-cheat-part-7-aimbot-crosshair)

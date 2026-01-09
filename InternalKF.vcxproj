@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="AActor.h" />
     <ClInclude Include="APawn.h" />
+    <ClInclude Include="APlayerController.h" />
     <ClInclude Include="Cheats.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="framework.h" />

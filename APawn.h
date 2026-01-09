@@ -1,8 +1,13 @@
 #pragma once
-class AController;
-class AActor;
+#include "AActor.h"
+#include "APlayerController.h" 
 
 class APawn : public AActor {
 public:
-    union {};
+    union {
+        struct {
+            char pad_controller[0x360];
+            AController* Controller; // 0x360
+        };
+    };
 };

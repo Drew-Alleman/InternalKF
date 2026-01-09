@@ -3,7 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <d3d9.h>
-#include "MinHook/MinHook.h" 
+#include "MinHook/MinHook.h"
+#include <algorithm>
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx9.h"
 #include "imgui/imgui_impl_win32.h"
@@ -14,6 +15,7 @@
 class AActor;
 class APawn;
 class ULevel;
+class AController;
 
 class Cheats {
 private:
@@ -25,6 +27,7 @@ private:
 
 public:
     APawn* myPawn = nullptr;
+    AController* myController = nullptr;
     bool bMenuOpen = true;
     bool bInstaKill = false;
     float fZedScaleValue = 1.0f;
@@ -37,13 +40,16 @@ public:
     bool CreateHook();
     void ReleaseDevice();
     std::vector<APawn*> GetMovingPawns();
-    void InstaKill();
+    APawn* GetClosestEnemy(std::vector<APawn*> pawns);
+    void TargetEntity(APawn* target);
+    void InstaKill(std::vector<APawn*> pawns);
     bool GetModules();
     bool GetLocalPlayer();
     void Start();
+    void RunCheats();
     void Cleanup();
-    void ScaleAActorsUp();
-    void ScaleAActorsDown();
+    void ScaleAPawns(std::vector<APawn*> pawns);
+    void DrawCrosshair();
 };
 
 extern Cheats cheats;

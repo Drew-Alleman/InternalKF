@@ -4,6 +4,7 @@
 #include "AActor.h" 
 #include "APawn.h"
 #include "Enums.h"
+#include "APlayerController.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -11,47 +12,55 @@ WNDPROC oWndProc;
 typedef HRESULT(STDMETHODCALLTYPE* EndScene_t)(IDirect3DDevice9*);
 EndScene_t oEndScene = nullptr;
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT __stdcall WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // --- Always allow your global hotkeys (even when menu is closed) ---
+    // 1. Let ImGui see the message first
+    if (cheats.bMenuOpen && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+        return true;
+
+    // 2. Hotkeys
     if (uMsg == WM_KEYDOWN)
     {
         switch (wParam)
         {
-        case VK_F1: cheats.bInstaKill = !cheats.bInstaKill; return 0;
-        case VK_F2: cheats.bGodMode = !cheats.bGodMode;   return 0;
-        case VK_F3: cheats.ScaleAActorsUp();               return 0;
-        case VK_F4: cheats.ScaleAActorsDown();             return 0;
-
         case VK_INSERT:
             cheats.bMenuOpen = !cheats.bMenuOpen;
             if (ImGui::GetCurrentContext())
-                // When true, ImGui renders its own mouse cursor
-                ImGui::GetIO().MouseDrawCursor = cheats.bMenuOpen;
-            return 0;
+            {
+                ImGuiIO& io = ImGui::GetIO();
+                io.MouseDrawCursor = cheats.bMenuOpen;
 
+                // UNLOCK MOUSE: This prevents the game from snapping your cursor
+                if (cheats.bMenuOpen) {
+                    SetCursor(LoadCursor(NULL, IDC_ARROW));
+                    ShowCursor(TRUE);
+                }
+            }
+            return 0;
         case VK_END:
             cheats.bCanUnload = true;
+            return 0;
+
+        case VK_F1:
+            cheats.bInstaKill = !cheats.bInstaKill;
+            return 0;
+
+        case VK_F2:
+            cheats.bGodMode = !cheats.bGodMode;
             return 0;
         }
     }
 
-    // If menu is closed, do NOT feed ImGui. Just pass to the game.
-    if (!cheats.bMenuOpen)
-        return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
-
-    // Menu is open: feed everything to ImGui first
-    if (ImGui::GetCurrentContext())
+    // 3. Block input to game if menu is open
+    if (cheats.bMenuOpen) {
         ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam);
+    }
 
-    // Handle ImGui input
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.WantCaptureMouse || io.WantCaptureKeyboard)
-        return 0; // swallow input, don't send to game
-
-    // Otherwise, let the game have it
     return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
 }
+
 HRESULT STDMETHODCALLTYPE hkEndScene(IDirect3DDevice9* pDevice) {
     if (cheats.bCanUnload) return oEndScene(pDevice);
 
@@ -70,18 +79,16 @@ HRESULT STDMETHODCALLTYPE hkEndScene(IDirect3DDevice9* pDevice) {
         init = true;
     }
 
-    // 1. BACKUP GAME STATE
-    // This prevents ImGui from messing up the game's textures/lighting
     IDirect3DStateBlock9* pStateBlock = nullptr;
     if (pDevice->CreateStateBlock(D3DSBT_ALL, &pStateBlock) == D3D_OK) {
         pStateBlock->Capture();
     }
 
-    // 2. RENDER IMGUI
     ImGui_ImplDX9_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    cheats.RunCheats();
     cheats.DrawMenu();
 
     ImGui::EndFrame();
@@ -102,76 +109,149 @@ bool Cheats::GetModules() {
     return engineModule != NULL;
 }
 
+void Cheats::TargetEntity(APawn* target) {
+    // 1. Validation: Ensure pointers are valid and target is alive
+    if (!myPawn || !myController || !target || target->health <= 0) return;
+
+    // 2. Position Deltas
+    float dx = target->x - myPawn->x;
+    float dy = target->y - myPawn->y;
+
+    // Aim for the head: Target's base Z + height vs. My base Z + height
+    float dz = (target->z + target->height) - (myPawn->z + myPawn->height);
+
+    // 3. Distance Calculation
+    float horizontalDist = sqrt(dx * dx + dy * dy);
+
+    // Deadzone check: Prevent "aim jitter" when standing inside the target
+    if (horizontalDist < 5.0f) return;
+
+    // 4. Trigonometry (Radians)
+    float yawRad = atan2(dx, dy);
+    float pitchRad = atan2(dz, horizontalDist);
+
+    // 5. Conversion to Unreal Units (Rotators)
+    // 65536 / (2 * PI) = 10430.378
+    const float UnrealModifier = 10430.378f;
+    int newYaw = (int)(yawRad * UnrealModifier);
+    int newPitch = (int)(pitchRad * UnrealModifier);
+
+    if (newPitch > 16000) newPitch = 16000;
+    else if (newPitch < -16000) newPitch = -16000;
+
+    myController->Yaw = newYaw & 0xFFFF;
+    myController->Pitch = newPitch;
+}
+
+APawn* Cheats::GetClosestEnemy(std::vector<APawn*> pawns) {
+    APawn* closest = nullptr;
+    float minDistanceSq = 100000000.0f; // Large value
+
+    for (APawn* pawn : pawns) {
+
+        if (pawn == nullptr) {
+            continue;
+        }
+
+        // Skip teammates
+        if (pawn->height == myPawn->height) {
+            continue;
+        }
+
+        float dx = pawn->x - myPawn->x;
+        float dy = pawn->y - myPawn->y;
+        float dz = pawn->z - myPawn->z;
+
+        float dist = (dx * dx) + (dy * dy) + (dz * dz);
+
+        if (dist < minDistanceSq) {
+            minDistanceSq = dist;
+            closest = pawn;
+        }
+    }
+    return closest;
+}
+
 bool Cheats::GetLocalPlayer() {
     if (!engineModule && !GetModules()) return false;
 
-    static uintptr_t GEngineAddr = engineModule + 0x004C6934;
-    uintptr_t GEngine = *(uintptr_t*)GEngineAddr;
-    if (!GEngine) return false;
+    __try {
+        // 1. Get GEngine
+        uintptr_t GEngine = *(uintptr_t*)(engineModule + 0x004C6934);
+        if (!GEngine) return false;
 
-    uintptr_t pawnAddr = *(uintptr_t*)(GEngine + 0x38);
-    if (!pawnAddr) return false;
+        // 2. Get the Pawn (GEngine + 0x38)
+        uintptr_t pawnAddr = *(uintptr_t*)(GEngine + 0x38);
+        if (!pawnAddr) return false;
+        this->myPawn = (APawn*)pawnAddr;
 
-    this->myPawn = (APawn*)pawnAddr;
-    return (myPawn != nullptr);
+        // 3. Get the Controller directly using the offset from your screenshot
+        // We read it as a uintptr_t first to verify it's not 0
+        uintptr_t controllerAddr = *(uintptr_t*)(pawnAddr + 0x360);
+
+        if (controllerAddr == 0) {
+            this->myController = nullptr;
+            return false;
+        }
+
+        this->myController = (AController*)controllerAddr;
+        return true;
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
+}
+
+bool IsValidActor(AActor* actor) {
+    if (!actor) return false;
+
+    __try {
+        if (actor->height < 38.0f || actor->isBrush) return false;
+        return (actor->physics == PHYS::Walking || actor->physics == PHYS::Falling);
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
 }
 
 std::vector<APawn*> Cheats::GetMovingPawns() {
     std::vector<APawn*> pawns;
 
-    if (!myPawn || !myPawn->Level)
-        return pawns;
+    if (!myPawn || !myPawn->Level) return pawns;
 
     ULevel* level = myPawn->Level;
+    int count = level->currentEntities;
 
-    // sanity clamp (prevents insane loops if currentEntities is wrong/stale)
-    if (level->currentEntities <= 0 || level->currentEntities > 50000)
-        return pawns;
-
-    for (int i = 0; i < level->currentEntities; i++) {
+    // Use a local copy of the list to minimize race conditions
+    for (int i = 0; i < count; i++) {
         AActor* a = level->EntityList[i];
-        if (!a || a == (AActor*)myPawn)
-            continue;
 
-        // If this field read is sometimes unsafe, you may need more pointer validation.
-        if (a->physics != PHYS::Walking && a->physics != PHYS::Falling)
-            continue;
+        // Use our safe check function
+        if (!IsValidActor(a) || a == (AActor*)myPawn) continue;
 
-        // Treat it as a pawn ONLY after your filters
         APawn* p = (APawn*)a;
 
-        // Extra sanity on health reads
-        if (p->health <= 0 || p->health > 10000)
-            continue;
+        // Final sanity check on pawn-specific data
+        if (p->health <= 0 || p->health > 10000) continue;
 
         pawns.push_back(p);
     }
     return pawns;
 }
 
-void Cheats::ScaleAActorsUp() {
-    for (APawn* pawn : GetMovingPawns()) {
-        if (!pawn) continue;
-        pawn->x3DDrawScale *= 2.0f;
-        pawn->y3DDrawScale *= 2.0f;
-        pawn->z3DDrawScale *= 2.0f;
-        pawn->drawSize *= 2.0f;
+void Cheats::ScaleAPawns(std::vector<APawn*> pawns) {
+    for (APawn* pawn : pawns) {
+        if (!pawn || pawn->x3DDrawScale == fZedScaleValue) continue;
+        pawn->x3DDrawScale = fZedScaleValue;
+        pawn->y3DDrawScale = fZedScaleValue;
+        pawn->z3DDrawScale = fZedScaleValue;
+        pawn->drawSize = fZedScaleValue;
     }
 }
 
-void Cheats::ScaleAActorsDown() {
-    for (APawn* pawn : GetMovingPawns()) {
-        if (!pawn) continue;
-        pawn->x3DDrawScale /= 2.0f;
-        pawn->y3DDrawScale /= 2.0f;
-        pawn->z3DDrawScale /= 2.0f;
-        pawn->drawSize /= 2.0f;
-        if (pawn->drawSize < 0.1f) pawn->drawSize = 0.1f;
-    }
-}
 
-void Cheats::InstaKill() {
-    for (APawn* pawn : GetMovingPawns()) {
+void Cheats::InstaKill(std::vector<APawn*> pawns) {
+    for (APawn* pawn : pawns) {
         if (!pawn) continue;
         if (pawn->health > 5) pawn->health = 5;
     }
@@ -184,7 +264,11 @@ void Cheats::DrawMenu() {
     ImGui::Separator();
     ImGui::Text("InstaKill (F1): %s", bInstaKill ? "ON" : "OFF");
     ImGui::Text("GodMode (F2): %s", bGodMode ? "ON" : "OFF");
-    ImGui::Text("F3: Double Size | F4: Half Size");
+    ImGui::SliderFloat("Enemy Size", &fZedScaleValue, 0.5f, 5.0f, "%.1f");
+
+    if (ImGui::Button("Reset Scale")) {
+        fZedScaleValue = 1.0f;
+    }
     ImGui::End();
 }
 
@@ -202,29 +286,45 @@ void Cheats::Cleanup() {
     }
 }
 
+void Cheats::RunCheats() {
+    if (!GetLocalPlayer()) {
+        return;
+    }
+    else if (myPawn->health <= 0) {
+        return;
+    }
+
+    DrawCrosshair();
+
+    std::vector<APawn*> pawns = GetMovingPawns();
+
+    if (bInstaKill) InstaKill(pawns);
+
+    if (bGodMode) {
+        myPawn->health = 100;
+    }
+
+    ScaleAPawns(pawns);
+    if (GetAsyncKeyState('Q') & 0x8000) {
+        APawn* target = GetClosestEnemy(pawns);
+        if (target) {
+            TargetEntity(target);
+        }
+    }
+}
+
 void Cheats::Start() {
-    if (!CreateHook()) return;
+    if (!CreateHook()) {
+        std::cout << "[-] Failed to hook EndScene. Thread exiting." << std::endl;
+        return;
+    }
+
 
     while (!bCanUnload) {
-        if (!GetLocalPlayer()) {
-            std::cout << "[-] Failed to fetch local player object, sleeping for 5 seconds" << std::endl;
-            Sleep(5000);
-            continue;
-        }
-        else if (myPawn->health <= 0) {
-            std::cout << "[-] Localplayer is dead sleeping for 3 seconds" << std::endl;
-            Sleep(3000);
-            continue;
-        }
-
-        if (bInstaKill) InstaKill();
-
-        if (bGodMode) {
-            myPawn->health = 100;
-        }
-        Sleep(25);
+        Sleep(1000);
     }
-    Sleep(100);
+
+    std::cout << "[+] Unloading sequence started..." << std::endl;
     Cleanup();
 }
 
@@ -261,6 +361,34 @@ bool Cheats::CreateHook() {
 
     std::cout << "[+] Hook successfully applied!" << std::endl;
     return true;
+}
+
+void Cheats::DrawCrosshair() {
+    ImGuiIO& io = ImGui::GetIO();
+
+    if (io.DisplaySize.x <= 0.0f || io.DisplaySize.y <= 0.0f)
+        return;
+
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+
+    // Find the center of the screen
+    float centerX = io.DisplaySize.x / 2.0f;
+    float centerY = io.DisplaySize.y / 2.0f;
+
+    float length = 10.0f; // Length of the crosshair lines
+    float thickness = 1.0f;
+    float gap = 2.0f;      // Gap in the middle
+
+    ImU32 color = IM_COL32(255, 0, 0, 255); // Red
+
+    // Vertical Top
+    drawList->AddLine(ImVec2(centerX, centerY - gap), ImVec2(centerX, centerY - gap - length), color, thickness);
+    // Vertical Bottom
+    drawList->AddLine(ImVec2(centerX, centerY + gap), ImVec2(centerX, centerY + gap + length), color, thickness);
+    // Horizontal Left
+    drawList->AddLine(ImVec2(centerX - gap, centerY), ImVec2(centerX - gap - length, centerY), color, thickness);
+    // Horizontal Right
+    drawList->AddLine(ImVec2(centerX + gap, centerY), ImVec2(centerX + gap + length, centerY), color, thickness);
 }
 
 bool Cheats::FetchEndSceneAddress() {
