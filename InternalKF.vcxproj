@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;INTERNALKF_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -94,7 +94,6 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;INTERNALKF_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -109,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;INTERNALKF_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -126,7 +125,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;INTERNALKF_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -140,6 +139,92 @@
     <ClInclude Include="APawn.h" />
     <ClInclude Include="APlayerController.h" />
     <ClInclude Include="Cheats.h" />
+    <ClInclude Include="dx\d2d1.h" />
+    <ClInclude Include="dx\d2d1effectauthor.h" />
+    <ClInclude Include="dx\d2d1effectauthor_1.h" />
+    <ClInclude Include="dx\d2d1effecthelpers.h" />
+    <ClInclude Include="dx\d2d1effects.h" />
+    <ClInclude Include="dx\d2d1effects_1.h" />
+    <ClInclude Include="dx\d2d1helper.h" />
+    <ClInclude Include="dx\d2d1_1.h" />
+    <ClInclude Include="dx\d2d1_1helper.h" />
+    <ClInclude Include="dx\d2d1_2.h" />
+    <ClInclude Include="dx\d2d1_2helper.h" />
+    <ClInclude Include="dx\d2d1_3.h" />
+    <ClInclude Include="dx\d2d1_3helper.h" />
+    <ClInclude Include="dx\d2dbasetypes.h" />
+    <ClInclude Include="dx\d2derr.h" />
+    <ClInclude Include="dx\d3d.h" />
+    <ClInclude Include="dx\d3d10.h" />
+    <ClInclude Include="dx\d3d10effect.h" />
+    <ClInclude Include="dx\d3d10misc.h" />
+    <ClInclude Include="dx\d3d10sdklayers.h" />
+    <ClInclude Include="dx\d3d10shader.h" />
+    <ClInclude Include="dx\d3d10_1.h" />
+    <ClInclude Include="dx\d3d10_1shader.h" />
+    <ClInclude Include="dx\d3d11.h" />
+    <ClInclude Include="dx\d3d11sdklayers.h" />
+    <ClInclude Include="dx\d3d11shader.h" />
+    <ClInclude Include="dx\d3d11shadertracing.h" />
+    <ClInclude Include="dx\d3d11_1.h" />
+    <ClInclude Include="dx\d3d11_2.h" />
+    <ClInclude Include="dx\d3d11_3.h" />
+    <ClInclude Include="dx\d3d11_4.h" />
+    <ClInclude Include="dx\d3d12.h" />
+    <ClInclude Include="dx\d3d12sdklayers.h" />
+    <ClInclude Include="dx\d3d12shader.h" />
+    <ClInclude Include="dx\d3d12video.h" />
+    <ClInclude Include="dx\d3d8.h" />
+    <ClInclude Include="dx\d3d8caps.h" />
+    <ClInclude Include="dx\d3d8types.h" />
+    <ClInclude Include="dx\d3d9.h" />
+    <ClInclude Include="dx\d3d9caps.h" />
+    <ClInclude Include="dx\d3d9types.h" />
+    <ClInclude Include="dx\d3dcaps.h" />
+    <ClInclude Include="dx\d3dcommon.h" />
+    <ClInclude Include="dx\d3dcompiler.h" />
+    <ClInclude Include="dx\d3dcsx.h" />
+    <ClInclude Include="dx\d3dtypes.h" />
+    <ClInclude Include="dx\d3dx10.h" />
+    <ClInclude Include="dx\d3dx10async.h" />
+    <ClInclude Include="dx\d3dx10core.h" />
+    <ClInclude Include="dx\d3dx10math.h" />
+    <ClInclude Include="dx\d3dx10mesh.h" />
+    <ClInclude Include="dx\d3dx10tex.h" />
+    <ClInclude Include="dx\d3dx11.h" />
+    <ClInclude Include="dx\d3dx11async.h" />
+    <ClInclude Include="dx\d3dx11core.h" />
+    <ClInclude Include="dx\d3dx11tex.h" />
+    <ClInclude Include="dx\d3dx9.h" />
+    <ClInclude Include="dx\d3dx9anim.h" />
+    <ClInclude Include="dx\d3dx9core.h" />
+    <ClInclude Include="dx\d3dx9effect.h" />
+    <ClInclude Include="dx\d3dx9math.h" />
+    <ClInclude Include="dx\d3dx9mesh.h" />
+    <ClInclude Include="dx\d3dx9shader.h" />
+    <ClInclude Include="dx\d3dx9shape.h" />
+    <ClInclude Include="dx\d3dx9tex.h" />
+    <ClInclude Include="dx\d3dx9xof.h" />
+    <ClInclude Include="dx\dcommon.h" />
+    <ClInclude Include="dx\dcomp.h" />
+    <ClInclude Include="dx\dcompanimation.h" />
+    <ClInclude Include="dx\dcomptypes.h" />
+    <ClInclude Include="dx\ddraw.h" />
+    <ClInclude Include="dx\dwrite.h" />
+    <ClInclude Include="dx\dwrite_1.h" />
+    <ClInclude Include="dx\dwrite_2.h" />
+    <ClInclude Include="dx\dwrite_3.h" />
+    <ClInclude Include="dx\dxgi.h" />
+    <ClInclude Include="dx\dxgi1_2.h" />
+    <ClInclude Include="dx\dxgi1_3.h" />
+    <ClInclude Include="dx\dxgi1_4.h" />
+    <ClInclude Include="dx\dxgi1_5.h" />
+    <ClInclude Include="dx\dxgi1_6.h" />
+    <ClInclude Include="dx\dxgicommon.h" />
+    <ClInclude Include="dx\dxgidebug.h" />
+    <ClInclude Include="dx\dxgiformat.h" />
+    <ClInclude Include="dx\dxgitype.h" />
+    <ClInclude Include="dx\dxva2api.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -153,22 +238,35 @@
     <ClInclude Include="MinHook.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ULevel.h" />
+    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cheats.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_dx9.cpp" />
-    <ClCompile Include="imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    <ClCompile Include="imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_dx9.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dx\d3dvec.inl" />
+    <None Include="dx\d3dx10math.inl" />
+    <None Include="dx\d3dx9math.inl" />
+    <None Include="dx\d3dx_dxgiformatconvert.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

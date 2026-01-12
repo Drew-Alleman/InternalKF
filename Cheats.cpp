@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Cheats.h"
 #include "ULevel.h"
 #include "AActor.h" 
@@ -16,6 +15,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 
 LRESULT __stdcall WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+
     // 1. Let ImGui see the message first
     if (cheats.bMenuOpen && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
         return true;
@@ -36,6 +36,9 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 if (cheats.bMenuOpen) {
                     SetCursor(LoadCursor(NULL, IDC_ARROW));
                     ShowCursor(TRUE);
+                }
+                else {
+                    ShowCursor(FALSE);
                 }
             }
             return 0;
@@ -62,6 +65,7 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 HRESULT STDMETHODCALLTYPE hkEndScene(IDirect3DDevice9* pDevice) {
+
     if (cheats.bCanUnload) return oEndScene(pDevice);
 
     static bool init = false;
@@ -104,9 +108,50 @@ HRESULT STDMETHODCALLTYPE hkEndScene(IDirect3DDevice9* pDevice) {
     return oEndScene(pDevice);
 }
 
+bool Cheats::GetGravityPointer() {
+    if (coreModule == NULL) return false;
+    uintptr_t basePtr = *(uintptr_t*)(coreModule + 0x00168008);
+    if (!basePtr) return false;
+    uintptr_t secondPtr = *(uintptr_t*)(basePtr + 0x148);
+    if (!secondPtr) return false;
+    pGravity = (float*)(secondPtr + 0x3EC);
+    return pGravity != nullptr;
+}
+
+bool Cheats::SetGravity() {
+    if (pGravity == nullptr) return false;
+    *pGravity = gravity;
+    return true;
+}
+
+bool Cheats::GetTimescalePointer() {
+    if (coreModule == NULL) return false;
+
+    // Read the base address from Core.dll
+    uintptr_t basePtr = *(uintptr_t*)(coreModule + 0x00168008);
+    if (!basePtr) return false;
+
+    // FIRST DEREFERENCE: Move from the base to the second level pointer
+    // This resolves the [12824100+98] part of your screenshot
+    uintptr_t secondPtr = *(uintptr_t*)(basePtr + 0x98);
+    if (!secondPtr) return false;
+
+    // FINAL OFFSET: Apply the 0x434 offset to the dereferenced address
+    pTimescale = (float*)(secondPtr + 0x434);
+
+    return pTimescale != nullptr;
+}
+
+bool Cheats::SetTimescale() {
+    if (pTimescale == nullptr) return false;
+    *pTimescale = timescale;
+    return true;
+}
+
 bool Cheats::GetModules() {
     engineModule = (uintptr_t)GetModuleHandleA("Engine.dll");
-    return engineModule != NULL;
+    coreModule = (uintptr_t)GetModuleHandleA("Core.dll");
+    return engineModule != NULL && coreModule != NULL;
 }
 
 void Cheats::TargetEntity(APawn* target) {
@@ -118,7 +163,7 @@ void Cheats::TargetEntity(APawn* target) {
     float dy = target->y - myPawn->y;
 
     // Aim for the head: Target's base Z + height vs. My base Z + height
-    float dz = (target->z + target->height) - (myPawn->z + myPawn->height);
+    float dz = (target->z + target->eyeHeight) - (myPawn->z + myPawn->eyeHeight);
 
     // 3. Distance Calculation
     float horizontalDist = sqrt(dx * dx + dy * dy);
@@ -154,7 +199,7 @@ APawn* Cheats::GetClosestEnemy(std::vector<APawn*> pawns) {
         }
 
         // Skip teammates
-        if (pawn->height == myPawn->height) {
+        if (pawn->eyeHeight == myPawn->eyeHeight) {
             continue;
         }
 
@@ -203,10 +248,10 @@ bool Cheats::GetLocalPlayer() {
 }
 
 bool IsValidActor(AActor* actor) {
-    if (!actor) return false;
+    if (actor == nullptr) return false;
 
     __try {
-        if (actor->height < 38.0f || actor->isBrush) return false;
+        if (actor->isBrush) return false;
         return (actor->physics == PHYS::Walking || actor->physics == PHYS::Falling);
     }
     __except (EXCEPTION_EXECUTE_HANDLER) {
@@ -227,9 +272,20 @@ std::vector<APawn*> Cheats::GetMovingPawns() {
         AActor* a = level->EntityList[i];
 
         // Use our safe check function
-        if (!IsValidActor(a) || a == (AActor*)myPawn) continue;
+        if (!IsValidActor(a)) {
+            continue;
+        };
+
+        if (a == (AActor*)myPawn) {
+            continue;
+        }
 
         APawn* p = (APawn*)a;
+
+        if (p->baseEyeHeight == myPawn->baseEyeHeight) {
+            std::cout << "[DEBUG] Removed AActor: 0x" << std::hex << a << " it is a teammate" << std::endl;
+            continue;
+        }
 
         // Final sanity check on pawn-specific data
         if (p->health <= 0 || p->health > 10000) continue;
@@ -245,7 +301,7 @@ void Cheats::ScaleAPawns(std::vector<APawn*> pawns) {
         pawn->x3DDrawScale = fZedScaleValue;
         pawn->y3DDrawScale = fZedScaleValue;
         pawn->z3DDrawScale = fZedScaleValue;
-        pawn->drawSize = fZedScaleValue;
+        pawn->drawScale = fZedScaleValue;
     }
 }
 
@@ -273,7 +329,7 @@ void Cheats::DrawMenu() {
 }
 
 void Cheats::Cleanup() {
-
+    std::cout << "[DEBUG] Cleaning up..." << std::endl;
     MH_DisableHook(endSceneAddress);
     MH_RemoveHook(endSceneAddress);
     MH_Uninitialize();
@@ -287,10 +343,12 @@ void Cheats::Cleanup() {
 }
 
 void Cheats::RunCheats() {
+    static bool init = false;
     if (!GetLocalPlayer()) {
         return;
     }
-    else if (myPawn->health <= 0) {
+    else if (myPawn->health <= 0 && myPawn->physics != PHYS::None) {
+        std::cout << "[DEBUG] Local APawn is dead!" << std::endl;
         return;
     }
 
@@ -305,30 +363,68 @@ void Cheats::RunCheats() {
     }
 
     ScaleAPawns(pawns);
+    
+    if (!init) {
+        std::cout << "[DEBUG] Set timescale and gravity!" << std::endl;
+        SetTimescale();
+        SetGravity();
+    }
+    
     if (GetAsyncKeyState('Q') & 0x8000) {
         APawn* target = GetClosestEnemy(pawns);
+        static APawn* lastTarget;
         if (target) {
             TargetEntity(target);
+            if (target != lastTarget) {
+                std::cout << "[DEBUG] Targeted Pawn: 0x" << std::hex << target << std::endl;
+                lastTarget = target;
+            }
+
         }
     }
 }
 
 void Cheats::Start() {
     if (!CreateHook()) {
-        std::cout << "[-] Failed to hook EndScene. Thread exiting." << std::endl;
         return;
     }
-
-
+    timescale = 2;
+    gravity = -500;
     while (!bCanUnload) {
+
+        if (pGravity == nullptr) {
+            if (!GetGravityPointer()) {
+                std::cout << "[DEBUG] Failed to fetch gravity pointer" << std::endl;
+            }
+            else {
+                std::cout << "[DEBUG] Fetched gravity pointer: " << std::hex << pGravity << std::endl;
+            }
+        }
+
+        if (pTimescale == nullptr) {
+            if (!GetTimescalePointer()) {
+                std::cout << "[DEBUG] Failed to fetch timescale pointer" << std::endl;
+            }
+            else {
+                std::cout << "[DEBUG] Fetched timescale pointer: " << std::hex << pTimescale << std::endl;
+            }
+        }
+
+
+        std::cout << "[DEBUG] Waiting for cheats to be unloaded..." << std::endl;
+
+        if (GetAsyncKeyState(VK_END) & 1) {
+            break;
+        }
+
         Sleep(1000);
     }
-
-    std::cout << "[+] Unloading sequence started..." << std::endl;
+    std::cout << "[DEBUG] Unloading!" << std::endl;
     Cleanup();
 }
 
 void Cheats::ReleaseDevice() {
+    std::cout << "[DEBUG] Releasing dummy device" << std::endl;
     if (pDummyDevice) { pDummyDevice->Release(); pDummyDevice = nullptr; }
     if (pD3D) { pD3D->Release(); pD3D = nullptr; }
     if (window) { DestroyWindow(window); window = nullptr; }
@@ -337,29 +433,34 @@ void Cheats::ReleaseDevice() {
 bool Cheats::CreateHook() {
     // 1.  Initialize MinHook
     if (MH_Initialize() != MH_OK) {
-        std::cout << "[-] Failed to initialize MinHook" << std::endl;
+        std::cout << "[CRITICAL_ERROR] Failed to initialize MinHook" << std::endl;
         return false;
     }
+
+    std::cout << "[DEBUG] Intialized MinHook" << std::endl;
 
     // 2. Find the address
     if (!FetchEndSceneAddress()) {
-        std::cout << "[-] Failed to fetch EndScene address" << std::endl;
+        std::cout << "[DEBUG] Failed to fetch EndScene address" << std::endl;
         return false;
     }
 
+    std::cout << "[DEBUG] Fetched vTable address of EndScene: "<< std::hex << endSceneAddress << std::endl;
+
+
     // 3. Create the hook
     if (MH_CreateHook(endSceneAddress, &hkEndScene, reinterpret_cast<LPVOID*>(&oEndScene)) != MH_OK) {
-        std::cout << "[-] Failed to create hook" << std::endl;
+        std::cout << "[CRITICAL_ERROR] Failed to create hook" << std::endl;
         return false;
     }
 
     // 4. Enable the hook
     if (MH_EnableHook(endSceneAddress) != MH_OK) {
-        std::cout << "[-] Failed to enable hook" << std::endl;
+        std::cout << "[CRITICAL_ERROR] Failed to enable hook" << std::endl;
         return false;
     }
 
-    std::cout << "[+] Hook successfully applied!" << std::endl;
+    std::cout << "[DEBUG] EndScene Hook successfully applied!" << std::endl;
     return true;
 }
 
@@ -412,5 +513,6 @@ bool Cheats::FetchEndSceneAddress() {
     ReleaseDevice();
     return (endSceneAddress != nullptr);
 }
+
 
 Cheats cheats;

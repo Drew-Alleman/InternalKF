@@ -1,5 +1,4 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
 #include "Cheats.h"
 #include <windows.h>
 #include <iostream>
@@ -12,21 +11,19 @@ void CreateConsole() {
     freopen_s(&f, "CONOUT$", "w", stderr);
     freopen_s(&f, "CONIN$", "r", stdin);
     std::cout.clear();
-    std::cout << "[+] Console Allocated Successfully!" << std::endl;
+    std::cout << "[DEBUG] Console Allocated Successfully!" << std::endl;
 }
 
 DWORD WINAPI MainThread(LPVOID lpParam) {
     HMODULE hModule = (HMODULE)lpParam;
+    Sleep(1000);
     CreateConsole();
-
-    if (!cheats.GetLocalPlayer()) {
-        std::cout << "Failed to fetch current player!" << std::endl;
-    }
 
     cheats.Start();
 
-    std::cout << "[*] Cleaning up and Detaching..." << std::endl;
+    std::cout << "[DEBUG] Cleaning up and Detaching..." << std::endl;
     FreeConsole();
+    Sleep(1000);
     FreeLibraryAndExitThread(hModule, 0);
     return 0;
 }

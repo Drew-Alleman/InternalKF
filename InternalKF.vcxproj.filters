@@ -19,6 +19,9 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{57f5c2ed-1a29-4aa8-9bfa-c60ca3932f23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\dx9">
+      <UniqueIdentifier>{f262097e-7275-4184-b5de-70d025540f1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -72,12 +75,270 @@
     <ClInclude Include="APlayerController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1_1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1_1helper.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1_2.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1_2helper.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1_3.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1_3helper.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1effectauthor.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1effectauthor_1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1effecthelpers.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1effects.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1effects_1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2d1helper.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2dbasetypes.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d2derr.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d8.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d8caps.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d8types.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d9.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d9caps.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d9types.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10_1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10_1shader.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10effect.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10misc.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10sdklayers.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d10shader.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11_1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11_2.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11_3.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11_4.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11sdklayers.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11shader.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d11shadertracing.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d12.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d12sdklayers.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d12shader.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3d12video.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dcaps.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dcommon.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dcompiler.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dcsx.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dtypes.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9anim.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9core.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9effect.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9math.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9mesh.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9shader.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9shape.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9tex.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx9xof.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx10.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx10async.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx10core.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx10math.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx10mesh.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx10tex.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx11.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx11async.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx11core.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\d3dx11tex.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dcommon.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dcomp.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dcompanimation.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dcomptypes.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\ddraw.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dwrite.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dwrite_1.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dwrite_2.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dwrite_3.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgi.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgi1_2.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgi1_3.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgi1_4.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgi1_5.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgi1_6.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgicommon.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgidebug.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgiformat.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxgitype.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
+    <ClInclude Include="dx\dxva2api.h">
+      <Filter>Header Files\dx9</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Cheats.cpp">
@@ -101,5 +362,19 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dx\d3dvec.inl">
+      <Filter>Header Files\dx9</Filter>
+    </None>
+    <None Include="dx\d3dx_dxgiformatconvert.inl">
+      <Filter>Header Files\dx9</Filter>
+    </None>
+    <None Include="dx\d3dx9math.inl">
+      <Filter>Header Files\dx9</Filter>
+    </None>
+    <None Include="dx\d3dx10math.inl">
+      <Filter>Header Files\dx9</Filter>
+    </None>
   </ItemGroup>
 </Project>

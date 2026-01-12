@@ -5,9 +5,7 @@
 class APawn : public AActor {
 public:
     union {
-        struct {
-            char pad_controller[0x360];
-            AController* Controller; // 0x360
-        };
+        // --- Pawn Specific (Movement & Logic) ---
+        struct { char pad_controller[0x360]; AController* Controller; };
     };
 };
