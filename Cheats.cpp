@@ -126,19 +126,11 @@ bool Cheats::SetGravity() {
 
 bool Cheats::GetTimescalePointer() {
     if (coreModule == NULL) return false;
-
-    // Read the base address from Core.dll
     uintptr_t basePtr = *(uintptr_t*)(coreModule + 0x00168008);
     if (!basePtr) return false;
-
-    // FIRST DEREFERENCE: Move from the base to the second level pointer
-    // This resolves the [12824100+98] part of your screenshot
     uintptr_t secondPtr = *(uintptr_t*)(basePtr + 0x98);
     if (!secondPtr) return false;
-
-    // FINAL OFFSET: Apply the 0x434 offset to the dereferenced address
     pTimescale = (float*)(secondPtr + 0x434);
-
     return pTimescale != nullptr;
 }
 
@@ -363,12 +355,7 @@ void Cheats::RunCheats() {
     }
 
     ScaleAPawns(pawns);
-    
-    if (!init) {
-        std::cout << "[DEBUG] Set timescale and gravity!" << std::endl;
-        SetTimescale();
-        SetGravity();
-    }
+
     
     if (GetAsyncKeyState('Q') & 0x8000) {
         APawn* target = GetClosestEnemy(pawns);
@@ -388,8 +375,6 @@ void Cheats::Start() {
     if (!CreateHook()) {
         return;
     }
-    timescale = 2;
-    gravity = -500;
     while (!bCanUnload) {
 
         if (pGravity == nullptr) {
