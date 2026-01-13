@@ -325,18 +325,26 @@ void Cheats::DrawMenu() {
 
 void Cheats::Cleanup() {
     std::cout << "[DEBUG] Cleaning up..." << std::endl;
+
+    // 1. Restore WndProc first so game stops sending messages to our WndProc function
+    if (oWndProc && gameWindow) {
+        SetWindowLongPtr(gameWindow, GWLP_WNDPROC, (LONG_PTR)oWndProc);
+    }
+
+    // 2. Disable Hooks (MinHook)
     MH_DisableHook(endSceneAddress);
     MH_RemoveHook(endSceneAddress);
     MH_Uninitialize();
 
+    Sleep(1000);
+
+    // 4. Shutdown ImGui
     ImGui_ImplDX9_Shutdown();
     ImGui_ImplWin32_Shutdown();
-    if (ImGui::GetCurrentContext()) ImGui::DestroyContext();
-    if (oWndProc && gameWindow) {
-        SetWindowLongPtr(gameWindow, GWLP_WNDPROC, (LONG_PTR)oWndProc);
+    if (ImGui::GetCurrentContext()) {
+        ImGui::DestroyContext();
     }
 }
-
 void Cheats::RunCheats() {
     static bool init = false;
     if (!GetLocalPlayer()) {
