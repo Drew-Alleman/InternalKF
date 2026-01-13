@@ -223,8 +223,7 @@ bool Cheats::GetLocalPlayer() {
         if (!pawnAddr) return false;
         this->myPawn = (APawn*)pawnAddr;
 
-        // 3. Get the Controller directly using the offset from your screenshot
-        // We read it as a uintptr_t first to verify it's not 0
+        // read it as a uintptr_t first to verify it's not 0
         uintptr_t controllerAddr = *(uintptr_t*)(pawnAddr + 0x360);
 
         if (controllerAddr == 0) {
@@ -330,7 +329,7 @@ void Cheats::Cleanup() {
     if (oWndProc && gameWindow) {
         SetWindowLongPtr(gameWindow, GWLP_WNDPROC, (LONG_PTR)oWndProc);
     }
-
+    
     // 2. Disable Hooks (MinHook)
     MH_DisableHook(endSceneAddress);
     MH_RemoveHook(endSceneAddress);
