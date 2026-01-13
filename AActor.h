@@ -27,14 +27,16 @@ public:
         struct { char pad_controller[0x360]; class AController* Controller; };
         struct { char pad_zjump[0x3F8]; float zJumpHeight; };
 
-        // --- Health & Pawn Data (0x400 - 0x500) ---
+        // --- Health & Pawn Data (0x400 + ) ---
         struct { char pad_weapon[0x43C]; Weapon* currentWeapon; };
         struct { char pad_eyes[0x448]; float baseEyeHeight, eyeHeight; };
         struct { char pad_superMax[0x47C]; float superHealthMax; };
         struct { char pad_hp[0x480]; int health; };
         struct { char pad_head[0x494]; float headRadius, headHeight, headScale; };
+        struct { char pad_brush[0xD78]; float weaponSway, weaponBob; };
 
         // --- Movement (0xE00+) ---
         struct { char pad_speed[0xE70]; float speed; };
+
     };
 };
