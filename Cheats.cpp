@@ -3,6 +3,7 @@
 #include "AActor.h" 
 #include "APawn.h"
 #include "Enums.h"
+#include "Weapon.h"
 #include "APlayerController.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -312,11 +313,13 @@ void Cheats::DrawMenu() {
     ImGui::Separator();
     ImGui::Text("InstaKill (F1): %s", bInstaKill ? "ON" : "OFF");
     ImGui::Text("GodMode (F2): %s", bGodMode ? "ON" : "OFF");
-    ImGui::SliderFloat("Enemy Size", &fZedScaleValue, 0.5f, 5.0f, "%.1f");
 
-    if (ImGui::Button("Reset Scale")) {
-        fZedScaleValue = 1.0f;
+    ImGui::SliderFloat("Enemy Size", &fZedScaleValue, 0.5f, 5.0f, "%.1f"); // NEW
+
+    if (ImGui::Button("Reset Scale")) { // NEW
+        fZedScaleValue = 1.0f; // NEW
     }
+
     ImGui::End();
 }
 
@@ -461,20 +464,15 @@ void Cheats::DrawCrosshair() {
     float centerX = io.DisplaySize.x / 2.0f;
     float centerY = io.DisplaySize.y / 2.0f;
 
-    float length = 10.0f; // Length of the crosshair lines
-    float thickness = 1.0f;
-    float gap = 2.0f;      // Gap in the middle
-
-    ImU32 color = IM_COL32(255, 0, 0, 255); // Red
-
+    ImU32 color = ImGui::ColorConvertFloat4ToU32(ImVec4(crosshairColor[0], crosshairColor[1], crosshairColor[2], crosshairColor[3]));
     // Vertical Top
-    drawList->AddLine(ImVec2(centerX, centerY - gap), ImVec2(centerX, centerY - gap - length), color, thickness);
+    drawList->AddLine(ImVec2(centerX, centerY - crosshairGap), ImVec2(centerX, centerY - crosshairGap - crosshairLength), color, crosshairThickness);
     // Vertical Bottom
-    drawList->AddLine(ImVec2(centerX, centerY + gap), ImVec2(centerX, centerY + gap + length), color, thickness);
+    drawList->AddLine(ImVec2(centerX, centerY + crosshairGap), ImVec2(centerX, centerY + crosshairGap + crosshairLength), color, crosshairThickness);
     // Horizontal Left
-    drawList->AddLine(ImVec2(centerX - gap, centerY), ImVec2(centerX - gap - length, centerY), color, thickness);
+    drawList->AddLine(ImVec2(centerX - crosshairGap, centerY), ImVec2(centerX - crosshairGap - crosshairLength, centerY), color, crosshairThickness);
     // Horizontal Right
-    drawList->AddLine(ImVec2(centerX + gap, centerY), ImVec2(centerX + gap + length, centerY), color, thickness);
+    drawList->AddLine(ImVec2(centerX + crosshairGap, centerY), ImVec2(centerX + crosshairGap + crosshairLength, centerY), color, crosshairThickness);
 }
 
 bool Cheats::FetchEndSceneAddress() {

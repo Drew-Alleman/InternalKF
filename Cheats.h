@@ -37,8 +37,13 @@ public:
     bool bGodMode = true;
     float* pTimescale;
     float* pGravity;
-    float timescale;
-    float gravity;
+    float timescale = 1.0f;
+    float gravity = -950;
+    float crosshairLength = 10.0f; // Length of the crosshair lines
+    float crosshairThickness = 1.0f;
+    float crosshairGap = 2.0f;      // Gap in the middle
+    bool bShowCrosshair = true;
+    float crosshairColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
     void DrawMenu();
     bool FetchEndSceneAddress();
